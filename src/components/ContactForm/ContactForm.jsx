@@ -1,44 +1,46 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { Button, Label, Form, InputName } from './ContactForm.styled';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 
-export class ContactForm extends Component {
-  static propTypes = {
-    createUser: PropTypes.func.isRequired,
-  };
+export const ContactForm=()=>{
+   const [name, setName]= useState('');
+   const [number, setNumber]= useState('');
 
-  state = {
-    name: '',
-    number: '',
-  };
-
-  onHandleChange = e => {
+  const onHandleChange = e => {
     const { name, value } = e.target;
-    this.setState({ [name]: value });
+   switch(name){
+    case 'name':
+      setName(value);
+      break;
+      case 'number':
+        setNumber(value);
+        break;
+
+        default:
+           return;
+   }
   };
 
-  onHandleSubmit = e => {
+  const onHandleSubmit = (e,{createUser}) => {
     e.preventDefault();
-    const { createUser } = this.props;
-    const { name, number } = this.state;
     const id = nanoid(2);
-    createUser({ name, number, id });
-    this.setState({
-      name: '',
-      number: '',
-    });
+    createUser( {name, number, id});
+   setName('');
+   setNumber('');
+    // this.setState({
+    //   name: '',
+    //   number: '',
+    //});
   };
-
-  render() {
-    const { name, number } = this.state;
+  
     return (
       <>
-        <Form onSubmit={this.onHandleSubmit}>
+        <Form onSubmit={onHandleSubmit}>
           <Label>
             Name
             <InputName
-              onChange={this.onHandleChange}
+              onChange={onHandleChange}
               type="text"
               name="name"
               value={name}
@@ -51,7 +53,7 @@ export class ContactForm extends Component {
           <Label>
             Number
             <InputName
-              onChange={this.onHandleChange}
+              onChange={onHandleChange}
               type="tel"
               name="number"
               value={number}
@@ -65,4 +67,7 @@ export class ContactForm extends Component {
       </>
     );
   }
-}
+
+ContactForm.propTypes = {
+  createUser: PropTypes.func.isRequired,
+  };
